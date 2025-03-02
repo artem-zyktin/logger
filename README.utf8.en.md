@@ -1,6 +1,6 @@
 ﻿# Logger
 
-Logger is a policy based logger. That means that you functionality depends on policies that would be passed to logger as template parameters.
+Logger is a policy based thread safe logger. That means that you functionality depends on policies that would be passed to logger as template parameters.
 
 ## License
 
