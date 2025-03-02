@@ -123,9 +123,9 @@ template<class P, class... Policies>
 constexpr bool has_policy_v<Logger<Policies...>, P> = (std::is_same_v<Policies, P> || ...);
 
 template<class T, class P>
-concept HasPolicy = has_policy_v<T, P>;
+concept HasPolicy = IsLogger<T> && has_policy_v<T, P>;
 
 template<class T, class P>
-concept HasNoPolicy = !has_policy_v<T, P>;
+concept HasNoPolicy = IsLogger<T> && !has_policy_v<T, P>;
 
 }
