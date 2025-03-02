@@ -1,7 +1,7 @@
 ﻿rootdir  = '../'
 builddir = rootdir .. 'build/'
 bindir   = rootdir .. 'bin/'
-src      = rootdir .. 'src/'
+srcdir   = rootdir .. 'src/'
 
 configdir       = bindir .. '%{cfg.architecture}/%{cfg.buildcfg}/'
 intermadiatedir = configdir .. 'intermediate/'
@@ -20,7 +20,7 @@ project 'logger'
 	targetdir (libdir)
 	objdir (intermadiatedir)
 
-	logger_srcdir = src .. 'logger/'
+	logger_srcdir = srcdir .. 'logger/'
 
 	files {
 		logger_srcdir .. '**.h',
@@ -43,13 +43,21 @@ project 'logger_test'
 	targetdir (outputdir)
 	objdir (intermadiatedir)
 
-	test_srcdir = src .. 'test/'
+	test_srcdir = srcdir .. 'test/'
 
 	files {
 		test_srcdir .. '**.h',
 		test_srcdir .. '**.hpp',
 		test_srcdir .. '**.cpp'
 	}
+
+	includedirs {
+		srcdir
+	}
+
+    links { 'logger' }
+
+    libdirs { libdir }
 
 	filter 'configurations:Debug'
 		defines { '_DEBUG' }
