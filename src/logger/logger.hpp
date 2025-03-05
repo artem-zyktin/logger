@@ -31,13 +31,15 @@ concept HasLevels = requires
 };
 
 template<class T>
-concept IsLogger = HasLevels<T> && requires (const T logger, typename T::Level level, std::string_view message)
+concept IsLogger = HasLevels<T> && requires (T logger, typename T::Level level, std::string_view message)
 {
 	{ logger.log(level, message) };
 	{ logger.debug(message) };
 	{ logger.info(message) };
 	{ logger.warning(message) };
 	{ logger.error(message) };
+	{ logger.set_log_level(level) };
+	{ logger.get_log_level() } -> std::same_as<typename T::Level>;
 };
 
 template<class T>
@@ -74,11 +76,15 @@ public:
 
 	inline std::string_view log_leveL_to_str(Level level) const { return level_strings_[static_cast<size_t>(level)]; }
 
+	Level get_log_level() const { return log_level_; }
+	void set_log_level(Level log_level) { log_level_ = log_level; }
+
 private:
 
 	inline std::string get_now_str() const;
 
 	mutable std::mutex log_mutex_ {};
+	Level log_level_ = Level::DEBUG;
 
 	static constexpr std::array<std::string_view, 4> level_strings_ = {
 		"DEBUG", "INFO", "WARNING", "ERROR"
@@ -88,6 +94,9 @@ private:
 template<LoggerPolicy ...Policies>
 inline void Logger<Policies...>::log(Level level, std::string_view message) const
 {
+	if (level < log_level_)
+		return;
+
 	std::scoped_lock lock(log_mutex_);
 
 	std::string_view level_name = log_leveL_to_str(level);

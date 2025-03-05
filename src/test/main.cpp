@@ -17,23 +17,38 @@ static_assert(logger::LoggerType<ConsoleLogger>);
 static_assert(logger::LoggerType<FileLogger>);
 static_assert(logger::LoggerType<ConsoleFileLogger>);
 
-template<logger::LoggerType T>
+template<logger::LoggerType LoggerT>
 void test()
 {
-	const T logger;
+	LoggerT logger;
 
-	if constexpr (logger::HasPolicy<T, logger::DefaultFileLoggerPolicy>)
+	if constexpr (logger::HasPolicy<LoggerT, logger::DefaultFileLoggerPolicy>)
 		logger::DefaultFileLoggerPolicy::set_file_path("log.log");
 
-	logger.log(T::Level::DEBUG, debug_message);
-	logger.log(T::Level::INFO, info_message);
-	logger.log(T::Level::WARNING, warning_message);
-	logger.log(T::Level::ERROR, error_message);
+	logger.log(LoggerT::Level::DEBUG, debug_message);
+	logger.log(LoggerT::Level::INFO, info_message);
+	logger.log(LoggerT::Level::WARNING, warning_message);
+	logger.log(LoggerT::Level::ERROR, error_message);
 
 	logger.debug(debug_message);
 	logger.info(info_message);
 	logger.warning(warning_message);
 	logger.error(error_message);
+
+	logger.set_log_level(LoggerT::Level::INFO);
+
+	logger.log(LoggerT::Level::DEBUG, debug_message); // do not should output anything
+	logger.log(LoggerT::Level::INFO, info_message);
+	logger.log(LoggerT::Level::WARNING, warning_message);
+	logger.log(LoggerT::Level::ERROR, error_message);
+
+	logger.debug(debug_message); // do not should output anything
+	logger.info(info_message);
+	logger.warning(warning_message);
+	logger.error(error_message);
+
+	if (LoggerT::Level::INFO == logger.get_log_level())
+		logger.info("OKAY");
 }
 
 int main()

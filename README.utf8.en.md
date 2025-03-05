@@ -100,6 +100,24 @@ void foo()
 }
 ```
 
+### Log level
+
+You can set up log level to skip logs that have lesser level. For example, you should set up log level - INFO to not see debug messages.
+
+```cpp
+using LoggerT = logger::Logger<logger::DefaultConsoleLoggerPolicy>;
+
+void foo()
+{
+    LoggerT log;
+    log.set_log_level(LoggerT::Level::INFO);
+
+    log.debug("Some debug message"); // there is no output
+}
+```
+
+ 
+
 ## Custom policies
 
 You could use your own policies or you own custom implementation of policies. The only requirements is to satisfy `logger::LoggerPolicy` concept:
