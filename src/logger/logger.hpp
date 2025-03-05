@@ -31,13 +31,15 @@ concept HasLevels = requires
 };
 
 template<class T>
-concept IsLogger = HasLevels<T> && requires (const T logger, typename T::Level level, std::string_view message)
+concept IsLogger = HasLevels<T> && requires (T logger, typename T::Level level, std::string_view message)
 {
 	{ logger.log(level, message) };
 	{ logger.debug(message) };
 	{ logger.info(message) };
 	{ logger.warning(message) };
 	{ logger.error(message) };
+	{ logger.set_log_level(level) };
+	{ logger.get_log_level() } -> std::same_as<typename T::Level>;
 };
 
 template<class T>
