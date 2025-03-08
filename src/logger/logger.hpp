@@ -60,6 +60,7 @@ public:
 private:
 
 	inline std::string get_now_str() const;
+	inline std::string get_this_thread_id() const;
 
 	template<class Policy>
 	inline void init_if_needed() const
@@ -94,7 +95,10 @@ inline void Logger<Policies...>::log(Level level, std::string_view message) cons
 	std::string_view level_name = log_leveL_to_str(level);
 	std::string time = get_now_str();
 
-	std::string log_entry = std::format("[{}][{}] {}", std::move(time), level_name, message);
+	std::string log_entry = std::format("[{}][thread-id={}][{}] {}", std::move(time),
+																	 get_this_thread_id(),
+																	 level_name,
+																	 message);
 
 	(Policies::write(log_entry), ...);
 }
@@ -115,6 +119,15 @@ inline std::string Logger<Policies...>::get_now_str() const
 	std::chrono::sys_seconds sys_time = std::chrono::floor<std::chrono::seconds>(now);
 
 	return std::format("{:%Y-%m-%d %H:%M:%S}.{:03d} UTC{:+}", sys_time, now_ms.count(), tz_offset / 60);
+}
+
+template<logger_policy ...Policies>
+inline std::string Logger<Policies...>::get_this_thread_id() const
+{
+	std::stringstream ss;
+	ss << std::this_thread::get_id();
+
+	return ss.str();
 }
 
 template<class T, class P>
