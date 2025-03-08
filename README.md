@@ -220,13 +220,13 @@ using Logger = logger::Logger<CustomConsoleLoggerPolicy>;
 
 There is come concepts to simplify some checks:
 
-- `LoggerPolicy<T>` check if `T` is a policy type (see above)
+- `logger_policy<T>` check if `T` is a policy type (see above)
 
-- `InitializedPolicy<T>` check if `T` is initialized policy - that is, it is a policy type and has static function `void init(void)`
+- `initialized_policy<T>` check if `T` is initialized policy - that is, it is a policy type and has static function `void init(void)`
 
-- `ReleasablePolicy<T>` check if `T` is releasable policy - that is, it is a policy type and has static function `void release(void)`
+- `releasable_policy<T>` check if `T` is releasable policy - that is, it is a policy type and has static function `void release(void)`
 
-- `HasLevels<T>` check if `T` has logging levels enumerate like
+- `has_levels<T>` check if `T` has logging levels enumerate like
   
   - `T::Level::DEBUG`
   
@@ -236,7 +236,7 @@ There is come concepts to simplify some checks:
   
   - `T::Level::ERROR`
 
-- `IsLogger<T>` check if `T` according to the logger type has next functions:
+- `is_logger<T>` check if `T` according to the logger type has next functions:
   
   - `void log(T::Level, std:;string_view) const`
   
@@ -248,13 +248,13 @@ There is come concepts to simplify some checks:
   
   - `void error(std::string_view) const`
 
-- `LoggerType<T>` is the same as `IsLogger<T>` (to use in template expressions)
+- `logger_type<T>` is the same as `is_logger<T>` (to use in template expressions)
 
-- `IsPolisyInList<Policy, class... Policies>` check if `Policy` in `Policies` list
+- `is_polisy_in_list<Policy, class... Policies>` check if `Policy` in `Policies` list
 
-- `HasPolicy<Policy, class... Policies>` the same as `IsPolisyInList`
+- `has_policy<Policy, class... Policies>` the same as `is_polisy_in_list`
 
-- `LoggerHasPolicy<T, P>` check if `T` is `LoggerType` and `T` has policy `P` for example:
+- `logger_has_policy<T, P>` check if `T` is `LoggerType` and `T` has policy `P` for example:
   
   ```cpp
   using Logger = logger::Logger<logger::DefaultFileLoggerPolicy,
@@ -262,4 +262,4 @@ There is come concepts to simplify some checks:
   static_assert(logger::HasPolicy<Logger, logger::DefaultFileLoggerPolicy>);
   ```
 
-- `LoggerHasNoPolicy<T, P>` reversed for `LoggerHasPolicy<T, P>`
+- `logger_has_no_policy<T, P>` reversed for `LoggerHasPolicy<T, P>`
