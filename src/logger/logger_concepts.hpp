@@ -7,31 +7,31 @@ namespace logger
 {
 
 template<class T>
-concept LoggerPolicy = requires (std::string_view message)
+concept logger_policy = requires (std::string_view message)
 {
 	{ T::write(message) };
 };
 
 template<class T>
-concept InitializedPolicy = LoggerPolicy<T> && requires
+concept initialized_policy = logger_policy<T> && requires
 {
 	{ T::init() };
 };
 
 template<class T>
-concept ReleasablePolicy = LoggerPolicy<T> && requires
+concept releasable_policy = logger_policy<T> && requires
 {
 	{ T::release() };
 };
 
 template<class Policy, class... Policies>
-concept IsPolisyInList = (std::same_as<Policy, Policies> || ...);
+concept is_polisy_in_list = (std::same_as<Policy, Policies> || ...);
 
 template<class Policy, class... Policies>
-concept HasPolicy = IsPolisyInList<Policy, Policies...>;
+concept has_policy = is_polisy_in_list<Policy, Policies...>;
 
 template<class T>
-concept HasLevels = requires
+concept has_levels = requires
 {
 	typename T::Level;
 	requires std::is_enum_v<typename T::Level>;
@@ -42,7 +42,7 @@ concept HasLevels = requires
 };
 
 template<class T>
-concept IsLogger = HasLevels<T> && requires (T logger, const T const_logger, typename T::Level level, std::string_view message)
+concept is_logger = has_levels<T> && requires (T logger, const T const_logger, typename T::Level level, std::string_view message)
 {
 	{ const_logger.log(level, message) };
 	{ const_logger.debug(message) };
@@ -55,6 +55,6 @@ concept IsLogger = HasLevels<T> && requires (T logger, const T const_logger, typ
 };
 
 template<class T>
-concept LoggerType = IsLogger<T>;
+concept logger_type = is_logger<T>;
 
 }

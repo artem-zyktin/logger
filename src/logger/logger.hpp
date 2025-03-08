@@ -15,7 +15,7 @@ namespace chrono = std::chrono;
 namespace logger
 {
 
-template<LoggerPolicy... Policies>
+template<logger_policy... Policies>
 class Logger
 {
 public:
@@ -63,14 +63,14 @@ private:
 	template<class Policy>
 	inline void init_if_needed()
 	{
-		if constexpr (InitializedPolicy<Policy>)
+		if constexpr (initialized_policy<Policy>)
 			Policy::init();
 	}
 
 	template<class Policy>
 	inline void release_if_needed()
 	{
-		if constexpr (ReleasablePolicy<Policy>)
+		if constexpr (releasable_policy<Policy>)
 			Policy::release();
 	}
 
@@ -82,7 +82,7 @@ private:
 	};
 };
 
-template<LoggerPolicy ...Policies>
+template<logger_policy ...Policies>
 inline void Logger<Policies...>::log(Level level, std::string_view message) const
 {
 	if (level < log_level_)
@@ -98,7 +98,7 @@ inline void Logger<Policies...>::log(Level level, std::string_view message) cons
 	(Policies::write(log_entry), ...);
 }
 
-template<LoggerPolicy ...Policies>
+template<logger_policy ...Policies>
 inline std::string Logger<Policies...>::get_now_str() const
 {
 	auto now = std::chrono::system_clock::now();
@@ -123,9 +123,9 @@ template<class P, class... Policies>
 constexpr bool has_policy_v<Logger<Policies...>, P> = (std::is_same_v<Policies, P> || ...);
 
 template<class T, class P>
-concept LoggerHasPolicy = IsLogger<T> && has_policy_v<T, P>;
+concept logger_has_policy = is_logger<T> && has_policy_v<T, P>;
 
 template<class T, class P>
-concept LoggerHasNoPolicy = IsLogger<T> && !has_policy_v<T, P>;
+concept logger_has_no_policy = is_logger<T> && !has_policy_v<T, P>;
 
 }
