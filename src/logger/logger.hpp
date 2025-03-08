@@ -83,12 +83,6 @@ private:
 };
 
 template<LoggerPolicy ...Policies>
-inline Logger<Policies...>::Logger()
-{
-
-}
-
-template<LoggerPolicy ...Policies>
 inline void Logger<Policies...>::log(Level level, std::string_view message) const
 {
 	if (level < log_level_)
