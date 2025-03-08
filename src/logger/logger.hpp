@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "logger_concepts.hpp"
+
 #include <cstdint>
 #include <array>
 #include <string>
@@ -13,44 +15,19 @@ namespace chrono = std::chrono;
 namespace logger
 {
 
-template<class T>
-concept LoggerPolicy = requires (std::string_view message)
-{
-	{ T::write(message) };
-};
-
-template<class T>
-concept HasLevels = requires
-{
-	typename T::Level;
-	requires std::is_enum_v<typename T::Level>;
-	{ T::Level::DEBUG };
-	{ T::Level::INFO };
-	{ T::Level::WARNING };
-	{ T::Level::ERROR };
-};
-
-template<class T>
-concept IsLogger = HasLevels<T> && requires (T logger, typename T::Level level, std::string_view message)
-{
-	{ logger.log(level, message) };
-	{ logger.debug(message) };
-	{ logger.info(message) };
-	{ logger.warning(message) };
-	{ logger.error(message) };
-	{ logger.set_log_level(level) };
-	{ logger.get_log_level() } -> std::same_as<typename T::Level>;
-};
-
-template<class T>
-concept LoggerType = IsLogger<T>;
-
 template<LoggerPolicy... Policies>
 class Logger
 {
 public:
-	Logger() = default;
-	~Logger() = default;
+	Logger()
+	{
+		(init_if_needed<Policies>(), ...);
+	}
+
+	~Logger()
+	{
+		(release_if_needed<Policies>(), ...);
+	}
 
 	Logger(Logger&&) noexcept = default;
 	Logger& operator=(Logger&&) noexcept = default;
@@ -83,6 +60,20 @@ private:
 
 	inline std::string get_now_str() const;
 
+	template<class Policy>
+	inline void init_if_needed()
+	{
+		if constexpr (InitializedPolicy<Policy>)
+			Policy::init();
+	}
+
+	template<class Policy>
+	inline void release_if_needed()
+	{
+		if constexpr (ReleasablePolicy<Policy>)
+			Policy::release();
+	}
+
 	mutable std::mutex log_mutex_ {};
 	Level log_level_ = Level::DEBUG;
 
@@ -90,6 +81,12 @@ private:
 		"DEBUG", "INFO", "WARNING", "ERROR"
 	};
 };
+
+template<LoggerPolicy ...Policies>
+inline Logger<Policies...>::Logger()
+{
+
+}
 
 template<LoggerPolicy ...Policies>
 inline void Logger<Policies...>::log(Level level, std::string_view message) const
@@ -132,9 +129,9 @@ template<class P, class... Policies>
 constexpr bool has_policy_v<Logger<Policies...>, P> = (std::is_same_v<Policies, P> || ...);
 
 template<class T, class P>
-concept HasPolicy = IsLogger<T> && has_policy_v<T, P>;
+concept LoggerHasPolicy = IsLogger<T> && has_policy_v<T, P>;
 
 template<class T, class P>
-concept HasNoPolicy = IsLogger<T> && !has_policy_v<T, P>;
+concept LoggerHasNoPolicy = IsLogger<T> && !has_policy_v<T, P>;
 
 }
