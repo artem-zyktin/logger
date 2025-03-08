@@ -61,14 +61,14 @@ private:
 	inline std::string get_now_str() const;
 
 	template<class Policy>
-	inline void init_if_needed()
+	inline void init_if_needed() const
 	{
 		if constexpr (initialized_policy<Policy>)
 			Policy::init();
 	}
 
 	template<class Policy>
-	inline void release_if_needed()
+	inline void release_if_needed() const
 	{
 		if constexpr (releasable_policy<Policy>)
 			Policy::release();
