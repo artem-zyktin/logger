@@ -13,16 +13,16 @@ constexpr std::string_view info_message = "some info message";
 constexpr std::string_view warning_message = "some warning message";
 constexpr std::string_view error_message = "some error message";
 
-static_assert(logger::LoggerType<ConsoleLogger>);
-static_assert(logger::LoggerType<FileLogger>);
-static_assert(logger::LoggerType<ConsoleFileLogger>);
+static_assert(logger::logger_type<ConsoleLogger>);
+static_assert(logger::logger_type<FileLogger>);
+static_assert(logger::logger_type<ConsoleFileLogger>);
 
-template<logger::LoggerType LoggerT>
+template<logger::logger_type LoggerT>
 void test()
 {
 	LoggerT logger;
 
-	if constexpr (logger::LoggerHasPolicy<LoggerT, logger::DefaultFileLoggerPolicy>)
+	if constexpr (logger::logger_has_policy<LoggerT, logger::DefaultFileLoggerPolicy>)
 		logger::DefaultFileLoggerPolicy::set_file_path("log.log");
 
 	logger.log(LoggerT::Level::DEBUG, debug_message);
