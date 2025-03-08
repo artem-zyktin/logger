@@ -1,6 +1,6 @@
 ﻿#include <logger/logger.hpp>
-#include <logger/console_policy.hpp>
-#include <logger/file_policy.hpp>
+#include <logger/default_console_policy.hpp>
+#include <logger/default_file_policy.hpp>
 
 #include <string_view>
 

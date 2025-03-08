@@ -1,4 +1,4 @@
-#include "console_policy.hpp"
+#include "default_console_policy.hpp"
 
 #include <iostream>
 
