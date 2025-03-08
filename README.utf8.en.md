@@ -133,7 +133,7 @@ struct SomeInitializedPolicy
         std::cout << message << std::endl;
     }
 };
-static_assert(InitializedPolicy<SomeInitializedPolicy>);
+static_assert(initialized_policy<SomeInitializedPolicy>);
 
 
 struct SomeReleasablePolicy
@@ -148,7 +148,7 @@ struct SomeReleasablePolicy
         std::cout << message << std::endl;
     }
 };
-static_assert(ReleasablePolicy<SomeReleasablePolicy>);
+static_assert(releasable_policy<SomeReleasablePolicy>);
 
 struct SomeInitializedAndReleasablePolicy
 {
@@ -167,8 +167,8 @@ struct SomeInitializedAndReleasablePolicy
         std::cout << message << std::endl;
     }
 };
-static_assert(InitializedPolicy<SomeInitializedAndReleasablePolicy>);
-static_assert(ReleasablePolicy<SomeInitializedAndReleasablePolicy>);
+static_assert(initialized_policy<SomeInitializedAndReleasablePolicy>);
+static_assert(releasable_policy<SomeInitializedAndReleasablePolicy>);
 
 using logger_t = logger::Logger<SomeInitializedPolicy,
                                 SomeReleasablePolicy,
@@ -190,7 +190,7 @@ You could use your own policies or you own custom implementation of policies. Th
 
 ```cpp
 template<class T>
-concept LoggerPolicy = requires (std::string_view message)
+concept logger_policy = requires (std::string_view message)
 {
     { T::write(message) };
 };
