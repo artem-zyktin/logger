@@ -24,7 +24,6 @@ private:
 	static std::mutex log_file_mutex_;
 };
 
-static_assert(LoggerPolicy<DefaultFileLoggerPolicy>);
-static_assert(ReleasablePolicy<DefaultFileLoggerPolicy>);
+static_assert(releasable_policy<DefaultFileLoggerPolicy>);
 
 }
