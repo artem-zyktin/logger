@@ -2,13 +2,14 @@
 
 #include "logger_concepts.hpp"
 
-#include <cstdint>
 #include <array>
 #include <string>
+#include <strstream>
 #include <string_view>
 #include <time.h>
 #include <mutex>
 #include <chrono>
+#include <thread>
 
 namespace chrono = std::chrono;
 
