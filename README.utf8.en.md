@@ -116,7 +116,73 @@ void foo()
 }
 ```
 
- 
+### Initialized/Releasable policies
+
+Logger has concepts of initialized and releasable policies (see concepts `InitializedPolicy<T>` and `ReleasablePolicy<T>`) to initialize policy by itself. Policies could be the same time initialized and releasable, or not. Logger will call `init()` for all policies that satisfy `InitializedPolicy<T>` concept and call `release()` for all policies that satisfy `ReleasablePolicy<T>` concept. For example:
+
+```cpp
+struct SomeInitializedPolicy
+{
+    static void init(void)
+    {
+        // some initialization
+    }
+
+    static void write(std::string_view message)
+    {
+        std::cout << message << std::endl;
+    }
+};
+static_assert(InitializedPolicy<SomeInitializedPolicy>);
+
+
+struct SomeReleasablePolicy
+{
+    static void release(void)
+    {
+        // some release
+    }
+
+    static void write(std::string_view message)
+    {
+        std::cout << message << std::endl;
+    }
+};
+static_assert(ReleasablePolicy<SomeReleasablePolicy>);
+
+struct SomeInitializedAndReleasablePolicy
+{
+    static void init(void)
+    {
+        // some initialization
+    }
+
+    static void release(void)
+    {
+        // some release
+    }
+
+    static void write(std::string_view message)
+    {
+        std::cout << message << std::endl;
+    }
+};
+static_assert(InitializedPolicy<SomeInitializedAndReleasablePolicy>);
+static_assert(ReleasablePolicy<SomeInitializedAndReleasablePolicy>);
+
+using logger_t = logger::Logger<SomeInitializedPolicy,
+                                SomeReleasablePolicy,
+                                SomeInitializedAndReleasablePolicy>;
+
+void foo()
+{
+    logger_t log(); // call of SomeInitializedPolicy::init()
+                    // and SomeInitializedAndReleasablePolicy::init()
+
+    log.debug("some debug message");
+} // call if SomeReleasablePolicy::release() and
+  // SomeInitializedAndReleasablePolicy::release() in the end of scope
+```
 
 ## Custom policies
 
@@ -156,6 +222,10 @@ There is come concepts to simplify some checks:
 
 - `LoggerPolicy<T>` check if `T` is a policy type (see above)
 
+- `InitializedPolicy<T>` check if `T` is initialized policy - that is, it is a policy type and has static function `void init(void)`
+
+- `ReleasablePolicy<T>` check if `T` is releasable policy - that is, it is a policy type and has static function `void release(void)`
+
 - `HasLevels<T>` check if `T` has logging levels enumerate like
   
   - `T::Level::DEBUG`
@@ -180,7 +250,11 @@ There is come concepts to simplify some checks:
 
 - `LoggerType<T>` is the same as `IsLogger<T>` (to use in template expressions)
 
-- `HasPolicy<T, P>` check if `T` is `LoggerType` and `T` has policy `P` for example:
+- `IsPolisyInList<Policy, class... Policies>` check if `Policy` in `Policies` list
+
+- `HasPolicy<Policy, class... Policies>` the same as `IsPolisyInList`
+
+- `LoggerHasPolicy<T, P>` check if `T` is `LoggerType` and `T` has policy `P` for example:
   
   ```cpp
   using Logger = logger::Logger<logger::DefaultFileLoggerPolicy,
@@ -188,4 +262,4 @@ There is come concepts to simplify some checks:
   static_assert(logger::HasPolicy<Logger, logger::DefaultFileLoggerPolicy>);
   ```
 
-- `HasNoPolicy<T, P>` reversed for `HasPolicy<T, P>`
+- `LoggerHasNoPolicy<T, P>` reversed for `LoggerHasPolicy<T, P>`

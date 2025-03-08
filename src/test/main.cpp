@@ -22,7 +22,7 @@ void test()
 {
 	LoggerT logger;
 
-	if constexpr (logger::HasPolicy<LoggerT, logger::DefaultFileLoggerPolicy>)
+	if constexpr (logger::LoggerHasPolicy<LoggerT, logger::DefaultFileLoggerPolicy>)
 		logger::DefaultFileLoggerPolicy::set_file_path("log.log");
 
 	logger.log(LoggerT::Level::DEBUG, debug_message);
