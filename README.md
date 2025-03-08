@@ -10,7 +10,7 @@ see `License.en.utf8.txt`/`License.ru.utf8.txt`
 
 ## Version
 
-`1.0`
+`1.1`
 
 ## Why Policy-Based Design?
 
