@@ -2,6 +2,7 @@
 
 #include "logger_concepts.hpp"
 #include "log_level.hpp"
+#include "logger_config.hpp"
 
 #include <array>
 #include <string>
@@ -23,7 +24,8 @@ class Logger
 public:
 	using Level = Level;
 
-	Logger()
+	Logger(LoggerConfig config = LoggerConfig())
+		: config_(std::move(config))
 	{
 		(init_if_needed<Policies>(), ...);
 	}
@@ -47,8 +49,7 @@ public:
 
 	inline std::string_view log_leveL_to_str(Level level) const { return level_strings_[static_cast<size_t>(level)]; }
 
-	Level get_log_level() const { return log_level_; }
-	void set_log_level(Level log_level) { log_level_ = log_level; }
+	const LoggerConfig& get_config() { return config_; }
 
 private:
 
@@ -69,8 +70,8 @@ private:
 			Policy::release();
 	}
 
-	mutable std::mutex log_mutex_ {};
-	Level log_level_ = Level::DEBUG;
+	mutable std::mutex log_mutex_ = std::mutex();
+	const LoggerConfig config_;
 
 	static constexpr std::array<std::string_view, 4> level_strings_ = {
 		"DEBUG", "INFO", "WARNING", "ERROR"
@@ -80,7 +81,7 @@ private:
 template<logger_policy ...Policies>
 inline void Logger<Policies...>::log(Level level, std::string_view message) const
 {
-	if (level < log_level_)
+	if (level < config_.log_level)
 		return;
 
 	std::scoped_lock lock(log_mutex_);
