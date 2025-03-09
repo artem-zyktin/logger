@@ -216,6 +216,51 @@ Then you can use:
 using Logger = logger::Logger<CustomConsoleLoggerPolicy>;
 ```
 
+## Important warning about using `initialized_policy` and `releasable_policy`
+
+There is some collision with using of the same policies in several different logger instances if they implement `initialized_policy` and `releasable_policy` concepts.
+For example this code leads to a double freeing and initialization for `FilePolicy`:
+
+```cpp
+struct FilePolicy
+{
+    static void init(){}
+    static void write(std::string_view message){}
+    static void release(){}
+};
+
+struct SocketPolicy
+{
+    static void init(){}
+    static void write(std::string_view message){}
+    static void release(){}
+};
+
+static_assert(initialized_policy<FilePolicy>);
+static_assert(releasable_policy<FilePolicy>);
+static_assert(initialized_policy<SocketPolicy>);
+static_assert(releasable_policy<SocketPolicy>);
+
+using FileLogger = logger::Logger<FilePolicy>;
+using FileSocketLogger = logger::Logger<FilePolicy, SocketPolicy>;
+
+int main()
+{
+    FileLogger f_logger; // call FilePolicy::init() for FileLogger 
+    FileSocketLogger  fs_logger; // call FilePolicy::init() and
+                                 // SocketPolicy::init() for
+                                 // FileSocketLogger
+} // call FilePolicy::release() twice
+  // (once from FileLogger and once more time for FileSocketLogger)
+  // and SocketPolicy::release once
+```
+
+There is could be two decisions:
+
+1)  Do not use the same policy for different logger
+
+2) If you really need to use the same policies for different loggers - bypass implementation of `initialized_policy` and `releasable_policy`. Then initialization and releasing moments of policies is your responsibility.
+
 ## Concepts
 
 There is come concepts to simplify some checks:
