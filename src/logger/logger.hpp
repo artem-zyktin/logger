@@ -30,9 +30,8 @@ public:
 		(release_if_needed<Policies>(), ...);
 	}
 
-	Logger(Logger&&) noexcept = default;
-	Logger& operator=(Logger&&) noexcept = default;
-
+	Logger(Logger&&) = delete;
+	Logger& operator=(Logger&&) = delete;
 	Logger(const Logger&) = delete;
 	Logger& operator=(const Logger&) = delete;
 
