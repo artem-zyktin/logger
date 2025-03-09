@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "logger_concepts.hpp"
+#include "log_level.hpp"
 
 #include <array>
 #include <string>
@@ -20,6 +21,8 @@ template<logger_policy... Policies>
 class Logger
 {
 public:
+	using Level = Level;
+
 	Logger()
 	{
 		(init_if_needed<Policies>(), ...);
@@ -34,15 +37,6 @@ public:
 	Logger& operator=(Logger&&) = delete;
 	Logger(const Logger&) = delete;
 	Logger& operator=(const Logger&) = delete;
-
-
-	enum class Level : uint16_t
-	{
-		DEBUG,
-		INFO,
-		WARNING,
-		ERROR
-	};
 
 	void log(Level level, std::string_view message) const;
 
