@@ -13,4 +13,6 @@ enum class Level : uint16_t
 	ERROR
 };
 
-}
+constexpr Level DEFAULT_LOG_LEVEL = Level::DEBUG;
+
+} // namespace logger
