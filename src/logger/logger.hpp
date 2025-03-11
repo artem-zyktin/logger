@@ -47,7 +47,6 @@ public:
 	inline void warning(std::string_view message) const { log(Level::WARNING, message); }
 	inline void error(std::string_view message)   const { log(Level::ERROR, message); }
 
-	inline std::string_view log_leveL_to_str(Level level) const { return level_strings_[static_cast<size_t>(level)]; }
 
 	const LoggerConfig& get_config() { return config_; }
 
@@ -72,11 +71,7 @@ private:
 
 	mutable std::mutex log_mutex_ = std::mutex();
 	const LoggerConfig config_;
-
-	static constexpr std::array<std::string_view, 4> level_strings_ = {
-		"DEBUG", "INFO", "WARNING", "ERROR"
-	};
-};
+}; // class Logger
 
 template<logger_policy ...Policies>
 inline void Logger<Policies...>::log(Level level, std::string_view message) const
