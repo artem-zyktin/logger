@@ -13,11 +13,11 @@ namespace logger
 class DefaultFileLoggerPolicy
 {
 public:
-	static void set_file_path(std::string_view file_path);
+	static void set_file_path(const std::string_view file_path);
 
 	static void release();
 
-	static void write(std::string_view message);
+	static void write(const std::string_view message);
 
 private:
 	static std::ofstream log_file_;

@@ -40,15 +40,13 @@ public:
 	Logger(const Logger&) = delete;
 	Logger& operator=(const Logger&) = delete;
 
-	void log(Level level, std::string_view message) const;
+	void log(Level level, const std::string_view message) const;
 
-	inline void debug(std::string_view message)   const { log(Level::DEBUG, message); }
-	inline void info(std::string_view message)    const { log(Level::INFO, message); }
-	inline void warning(std::string_view message) const { log(Level::WARNING, message); }
-	inline void error(std::string_view message)   const { log(Level::ERROR, message); }
+	inline void debug(const std::string_view message)   const { log(Level::DEBUG, message); }
+	inline void info(const std::string_view message)    const { log(Level::INFO, message); }
+	inline void warning(const std::string_view message) const { log(Level::WARNING, message); }
+	inline void error(const std::string_view message)   const { log(Level::ERROR, message); }
 
-
-	const LoggerConfig& get_config() { return config_; }
 	const LoggerConfig& get_config() const { return config_; }
 
 private:
@@ -75,7 +73,7 @@ private:
 }; // class Logger
 
 template<logger_policy ...Policies>
-inline void Logger<Policies...>::log(Level level, std::string_view message) const
+inline void Logger<Policies...>::log(Level level, const std::string_view message) const
 {
 	if (level < config_.log_level)
 		return;
@@ -85,10 +83,10 @@ inline void Logger<Policies...>::log(Level level, std::string_view message) cons
 	const std::string_view level_name = level_to_str(level);
 	const std::string time = get_now_str();
 
-	std::string log_entry = std::format("[{}][thread-id={}][{}] {}", std::move(time),
-																	 get_this_thread_id(),
-																	 level_name,
-																	 message);
+	const std::string log_entry = std::format("[{}][thread-id={}][{}] {}", std::move(time),
+																		   get_this_thread_id(),
+																		   level_name,
+																		   message);
 
 	(Policies::write(log_entry), ...);
 }
@@ -96,17 +94,17 @@ inline void Logger<Policies...>::log(Level level, std::string_view message) cons
 template<logger_policy ...Policies>
 inline std::string Logger<Policies...>::get_now_str() const
 {
-	auto now = std::chrono::system_clock::now();
-	auto now_time_t = std::chrono::system_clock::to_time_t(now);
-	auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+	const auto now = std::chrono::system_clock::now();
+	const auto now_time_t = std::chrono::system_clock::to_time_t(now);
+	const auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
 
-	std::tm tm_local = *std::localtime(&now_time_t);
+	const std::tm tm_local = *std::localtime(&now_time_t);
 
-	auto tz_offset = std::chrono::duration_cast<std::chrono::minutes>(
+	const auto tz_offset = std::chrono::duration_cast<std::chrono::minutes>(
 		std::chrono::current_zone()->get_info(now).offset
 	).count();
 
-	std::chrono::sys_seconds sys_time = std::chrono::floor<std::chrono::seconds>(now);
+	const std::chrono::sys_seconds sys_time = std::chrono::floor<std::chrono::seconds>(now);
 
 	return std::format("{:%Y-%m-%d %H:%M:%S}.{:03d} UTC{:+}", sys_time, now_ms.count(), tz_offset / 60);
 }

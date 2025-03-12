@@ -7,7 +7,7 @@ namespace logger
 
 struct DefaultConsoleLoggerPolicy
 {
-	static void write(std::string_view);
+	static void write(const std::string_view);
 };
 
 }

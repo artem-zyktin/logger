@@ -7,7 +7,7 @@ namespace logger
 {
 
 template<class T>
-concept logger_policy = requires (std::string_view message)
+concept logger_policy = requires (const std::string_view message)
 {
 	{ T::write(message) };
 };
@@ -42,7 +42,7 @@ concept has_levels = requires
 };
 
 template<class T>
-concept is_logger = has_levels<T> && requires (T logger, const T const_logger, typename T::Level level, std::string_view message)
+concept is_logger = has_levels<T> && requires (const T logger, const T const_logger, typename T::Level level, const std::string_view message)
 {
 	{ const_logger.log(level, message) };
 	{ const_logger.debug(message) };

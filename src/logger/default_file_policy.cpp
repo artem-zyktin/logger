@@ -6,7 +6,7 @@ namespace logger
 std::ofstream DefaultFileLoggerPolicy::log_file_;
 std::mutex DefaultFileLoggerPolicy::log_file_mutex_;
 
-void DefaultFileLoggerPolicy::set_file_path(std::string_view file_path)
+void DefaultFileLoggerPolicy::set_file_path(const std::string_view file_path)
 {
 	release();
 
@@ -22,7 +22,7 @@ void DefaultFileLoggerPolicy::release()
 		log_file_.close();
 }
 
-void DefaultFileLoggerPolicy::write(std::string_view message)
+void DefaultFileLoggerPolicy::write(const std::string_view message)
 {
 	std::scoped_lock lock(log_file_mutex_);
 

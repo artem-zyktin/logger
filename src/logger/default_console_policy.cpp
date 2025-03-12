@@ -5,7 +5,7 @@
 namespace logger
 {
 
-void DefaultConsoleLoggerPolicy::write(std::string_view message)
+void DefaultConsoleLoggerPolicy::write(const std::string_view message)
 {
 	std::cout << message << std::endl;
 }
