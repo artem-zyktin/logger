@@ -49,9 +49,6 @@ concept is_logger = has_levels<T> && requires (T logger, const T const_logger, t
 	{ const_logger.info(message) };
 	{ const_logger.warning(message) };
 	{ const_logger.error(message) };
-
-	{ logger.set_log_level(level) };
-	{ logger.get_log_level() } -> std::same_as<typename T::Level>;
 };
 
 template<class T>
