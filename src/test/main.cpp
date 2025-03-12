@@ -20,7 +20,16 @@ static_assert(logger::logger_type<ConsoleFileLogger>);
 template<logger::logger_type LoggerT>
 void test()
 {
-	LoggerT logger;
+	std::string json_config = R"(
+		{
+			"logger" : {
+				"log_level" : "info",
+				"log_file" : "log.log"
+			}
+		}
+	)";
+
+	const LoggerT logger (logger::read_config_from_json(json_config));
 
 	if constexpr (logger::logger_has_policy<LoggerT, logger::DefaultFileLoggerPolicy>)
 		logger::DefaultFileLoggerPolicy::set_file_path("log.log");
@@ -35,8 +44,6 @@ void test()
 	logger.warning(warning_message);
 	logger.error(error_message);
 
-	logger.set_log_level(LoggerT::Level::INFO);
-
 	logger.log(LoggerT::Level::DEBUG, debug_message); // do not should output anything
 	logger.log(LoggerT::Level::INFO, info_message);
 	logger.log(LoggerT::Level::WARNING, warning_message);
@@ -47,7 +54,7 @@ void test()
 	logger.warning(warning_message);
 	logger.error(error_message);
 
-	if (LoggerT::Level::INFO == logger.get_log_level())
+	if (LoggerT::Level::INFO == logger.get_config().log_level)
 		logger.info("OKAY");
 }
 

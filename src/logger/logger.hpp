@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include "logger_concepts.hpp"
+#include "log_level.hpp"
+#include "logger_config.hpp"
 
 #include <array>
 #include <string>
@@ -20,7 +22,10 @@ template<logger_policy... Policies>
 class Logger
 {
 public:
-	Logger()
+	using Level = Level;
+
+	Logger(LoggerConfig config = LoggerConfig())
+		: config_(std::move(config))
 	{
 		(init_if_needed<Policies>(), ...);
 	}
@@ -35,15 +40,6 @@ public:
 	Logger(const Logger&) = delete;
 	Logger& operator=(const Logger&) = delete;
 
-
-	enum class Level : uint16_t
-	{
-		DEBUG,
-		INFO,
-		WARNING,
-		ERROR
-	};
-
 	void log(Level level, std::string_view message) const;
 
 	inline void debug(std::string_view message)   const { log(Level::DEBUG, message); }
@@ -51,10 +47,9 @@ public:
 	inline void warning(std::string_view message) const { log(Level::WARNING, message); }
 	inline void error(std::string_view message)   const { log(Level::ERROR, message); }
 
-	inline std::string_view log_leveL_to_str(Level level) const { return level_strings_[static_cast<size_t>(level)]; }
 
-	Level get_log_level() const { return log_level_; }
-	void set_log_level(Level log_level) { log_level_ = log_level; }
+	const LoggerConfig& get_config() { return config_; }
+	const LoggerConfig& get_config() const { return config_; }
 
 private:
 
@@ -75,24 +70,20 @@ private:
 			Policy::release();
 	}
 
-	mutable std::mutex log_mutex_ {};
-	Level log_level_ = Level::DEBUG;
-
-	static constexpr std::array<std::string_view, 4> level_strings_ = {
-		"DEBUG", "INFO", "WARNING", "ERROR"
-	};
-};
+	mutable std::mutex log_mutex_ = std::mutex();
+	const LoggerConfig config_;
+}; // class Logger
 
 template<logger_policy ...Policies>
 inline void Logger<Policies...>::log(Level level, std::string_view message) const
 {
-	if (level < log_level_)
+	if (level < config_.log_level)
 		return;
 
 	std::scoped_lock lock(log_mutex_);
 
-	std::string_view level_name = log_leveL_to_str(level);
-	std::string time = get_now_str();
+	const std::string_view level_name = level_to_str(level);
+	const std::string time = get_now_str();
 
 	std::string log_entry = std::format("[{}][thread-id={}][{}] {}", std::move(time),
 																	 get_this_thread_id(),

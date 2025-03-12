@@ -22,6 +22,10 @@ project 'logger'
 
 	logger_srcdir = srcdir .. 'logger/'
 
+	includedirs {
+		srcdir
+	}
+
 	files {
 		logger_srcdir .. '**.h',
 		logger_srcdir .. '**.hpp',
