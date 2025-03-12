@@ -49,6 +49,7 @@ public:
 
 
 	const LoggerConfig& get_config() { return config_; }
+	const LoggerConfig& get_config() const { return config_; }
 
 private:
 
