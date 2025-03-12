@@ -82,8 +82,8 @@ inline void Logger<Policies...>::log(Level level, std::string_view message) cons
 
 	std::scoped_lock lock(log_mutex_);
 
-	std::string_view level_name = log_leveL_to_str(level);
-	std::string time = get_now_str();
+	const std::string_view level_name = level_to_str(level);
+	const std::string time = get_now_str();
 
 	std::string log_entry = std::format("[{}][thread-id={}][{}] {}", std::move(time),
 																	 get_this_thread_id(),
