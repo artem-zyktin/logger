@@ -8,6 +8,10 @@ BSD-3 clause
 
 see `License.en.utf8.txt`/`License.ru.utf8.txt`
 
+## Dependencies
+
+- **rapidjson** - [site](https://rapidjson.org/); [license](src/rapidjson/license.txt); version - 1.1.0
+
 ## Version
 
 `1.1`
@@ -257,7 +261,7 @@ int main()
 
 There is could be two decisions:
 
-1)  Do not use the same policy for different logger
+1) Do not use the same policy for different logger
 
 2) If you really need to use the same policies for different loggers - bypass implementation of `initialized_policy` and `releasable_policy`. Then initialization and releasing moments of policies is your responsibility.
 
