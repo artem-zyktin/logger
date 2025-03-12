@@ -10,4 +10,4 @@ struct DefaultConsoleLoggerPolicy
 	static void write(const std::string_view);
 };
 
-}
+} // namespace logger

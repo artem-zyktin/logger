@@ -10,4 +10,4 @@ void DefaultConsoleLoggerPolicy::write(const std::string_view message)
 	std::cout << message << std::endl;
 }
 
-}
+} // namespace logger

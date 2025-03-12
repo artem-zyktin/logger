@@ -26,4 +26,4 @@ private:
 
 static_assert(releasable_policy<DefaultFileLoggerPolicy>);
 
-}
+} // namespace logger

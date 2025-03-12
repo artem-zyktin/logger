@@ -130,4 +130,4 @@ concept logger_has_policy = is_logger<T> && has_policy_v<T, P>;
 template<class T, class P>
 concept logger_has_no_policy = is_logger<T> && !has_policy_v<T, P>;
 
-}
+} // namespace logger

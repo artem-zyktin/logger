@@ -54,4 +54,4 @@ concept is_logger = has_levels<T> && requires (const T logger, const T const_log
 template<class T>
 concept logger_type = is_logger<T>;
 
-}
+} // namespace logger

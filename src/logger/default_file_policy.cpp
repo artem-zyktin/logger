@@ -32,4 +32,4 @@ void DefaultFileLoggerPolicy::write(const std::string_view message)
 	log_file_ << message << std::endl;
 }
 
-}
+} // namespace logger
