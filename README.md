@@ -263,3 +263,31 @@ There is come concepts to simplify some checks:
   ```
 
 - `logger_has_no_policy<T, P>` reversed for `LoggerHasPolicy<T, P>`
+
+## Configuration
+
+Logger can read json config file, and it can be the same config a single configuration file with your project. The main point is to has `logger` key in the main level of json config (or, simplify, one of the following samples):
+
+1. ```json
+   {
+       "logger" : {
+           "log_file" : "/path/to/logfile",
+           "log_level" : "debug"
+       },
+       "other_config" : {
+           // some other config
+       }
+   }
+   ```
+
+2. ```json
+   {
+       "logger" : {
+           "log_file" : "/path/to/logfile",
+           "log_level" : "debug"
+       }
+   }
+   ```
+- Use `logger::read_config(const std::filesystem::path& file)` to read configuration from specified file
+
+- Use `logger::read_config_from_json(const std::string& json_text)` to read configuration from json text
