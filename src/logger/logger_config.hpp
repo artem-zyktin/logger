@@ -8,10 +8,12 @@
 namespace logger
 {
 
+constexpr std::string_view DEFAULT_LOG_FILE = "log.log";
+
 struct LoggerConfig
 {
-	Level log_level = Level::DEBUG;
-	std::string log_file_path = "log.log";
+	Level log_level = DEFAULT_LOG_LEVEL;
+	std::filesystem::path log_file_path = DEFAULT_LOG_FILE;
 };
 
 LoggerConfig read_config(const std::filesystem::path& file);
