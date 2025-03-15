@@ -30,7 +30,7 @@ Level str_to_level(const std::string_view level_str) noexcept
 		{ "debug",   Level::DEBUG },
 		{ "info",    Level::INFO },
 		{ "warning", Level::WARNING },
-		{ "level",   Level::ERROR },
+		{ "error",   Level::ERROR },
 	};
 
 	auto it = level_map.find(to_lower(level_str));
