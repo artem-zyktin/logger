@@ -15,7 +15,7 @@ see `License.en.utf8.txt`/`License.ru.utf8.txt`
 
 ## Version
 
-`1.1`
+`1.4.0`
 
 ## Why Policy-Based Design?
 
