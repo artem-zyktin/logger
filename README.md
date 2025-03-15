@@ -4,9 +4,7 @@ Logger is a policy based thread safe logger. That means that you functionality d
 
 ## License
 
-BSD-3 clause
-
-see `License.en.utf8.txt`/`License.ru.utf8.txt`
+[BSD-3 clause](License.utf8.en.txt)
 
 ## Dependencies
 
