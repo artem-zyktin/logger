@@ -10,7 +10,8 @@ see `License.en.utf8.txt`/`License.ru.utf8.txt`
 
 ## Dependencies
 
-- **rapidjson** - [site](https://rapidjson.org/); [license](src/rapidjson/license.txt); version - 1.1.0
+- **rapidjson** - [site](https://rapidjson.org/); [license](src/thirdparty/rapidjson/license.txt); version - 1.1.0
+- **googletest** - [site](https://google.github.io/googletest); [license](src/thirdparty/googletest/LICENSE); version - 1.16.0
 
 ## Version
 
