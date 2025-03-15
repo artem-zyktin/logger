@@ -1,7 +1,8 @@
-﻿rootdir  = '../'
-builddir = rootdir .. 'build/'
-bindir   = rootdir .. 'bin/'
-srcdir   = rootdir .. 'src/'
+﻿rootdir       = '../'
+builddir      = rootdir .. 'build/'
+bindir        = rootdir .. 'bin/'
+srcdir        = rootdir .. 'src/'
+thirdpartydir = srcdir .. 'thirdparty/'
 
 configdir       = bindir .. '%{cfg.architecture}/%{cfg.buildcfg}/'
 intermadiatedir = configdir .. 'intermediate/'
@@ -23,7 +24,7 @@ project 'logger'
 	logger_srcdir = srcdir .. 'logger/'
 
 	includedirs {
-		srcdir
+		thirdpartydir
 	}
 
 	files {
@@ -40,6 +41,32 @@ project 'logger'
 		defines { 'NDEBUG' }
 		optimize 'On'
 
+project 'gtest'
+	kind 'StaticLib'
+	language 'C++'
+	cppdialect 'C++20'
+	targetdir (libdir)
+	objdir (intermadiatedir)
+
+	includedirs {
+		thirdpartydir .. 'googletest/',
+		thirdpartydir .. 'googletest/include/'
+	}
+
+	files {
+		thirdpartydir .. 'googletest/src/gtest-all.cc'
+	}
+
+	defines { 'GTEST_HAS_PTHREAD=0' }
+
+	filter 'configurations:Debug'
+		defines { '_DEBUG' }
+		symbols 'On'
+
+	filter 'configurations:Release'
+		defines { 'NDEBUG' }
+		optimize 'On'
+
 project 'logger_test'
 	kind 'ConsoleApp'
 	language 'C++'
@@ -47,21 +74,18 @@ project 'logger_test'
 	targetdir (outputdir)
 	objdir (intermadiatedir)
 
-	test_srcdir = srcdir .. 'test/'
-
-	files {
-		test_srcdir .. '**.h',
-		test_srcdir .. '**.hpp',
-		test_srcdir .. '**.cpp'
-	}
-
 	includedirs {
-		srcdir
+		srcdir,
+		thirdpartydir .. 'googletest/include/'
 	}
 
-    links { 'logger' }
+	logger_test_srcdir = srcdir .. 'test/'
+	files {
+		logger_test_srcdir .. '**.cpp'
+	}
 
-    libdirs { libdir }
+	links { 'logger', 'gtest' }
+	libdirs { libdir }
 
 	filter 'configurations:Debug'
 		defines { '_DEBUG' }
