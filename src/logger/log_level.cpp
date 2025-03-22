@@ -35,8 +35,8 @@ Level str_to_level(const std::string_view level_str) noexcept
 
 	auto it = level_map.find(to_lower(level_str));
 
-	if (it != level_map.end())
-		std::runtime_error("uknown level string");
+	if (it == level_map.end())
+		throw std::runtime_error("uknown level string");
 
 	return it->second;
 }
@@ -54,7 +54,7 @@ std::string_view level_to_str(Level level) noexcept
 		case Level::ERROR:
 			return "error";
 		default:
-			std::runtime_error("unknown level value");
+			throw std::runtime_error("unknown level value");
 			break;
 	}
 }
