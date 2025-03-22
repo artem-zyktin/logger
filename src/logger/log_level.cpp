@@ -35,13 +35,10 @@ Level str_to_level(const std::string_view level_str) noexcept
 
 	auto it = level_map.find(to_lower(level_str));
 
-	Level level = DEFAULT_LOG_LEVEL;
 	if (it != level_map.end())
-		level = it->second;
-	else
-		std::cerr << "unknown level string" << std::endl;
+		std::runtime_error("uknown level string");
 
-	return level;
+	return it->second;
 }
 
 std::string_view level_to_str(Level level) noexcept
