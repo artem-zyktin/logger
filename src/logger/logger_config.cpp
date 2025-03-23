@@ -14,6 +14,7 @@ namespace
 
 using namespace rapidjson;
 using namespace logger;
+using namespace std::literals;
 
 inline void warning(const std::string_view message)
 {
@@ -36,11 +37,23 @@ std::string parse_log_file(Value const * const logger_section)
 
 Level parse_log_level(Value const * const logger_section)
 {
-	Level result;
+	Level result = DEFAULT_LOG_LEVEL;
 	if (logger_section->HasMember("log_level"))
 	{
 		if ((*logger_section)["log_level"].IsString())
 			result = str_to_level((*logger_section)["log_level"].GetString());
+	}
+
+	return result;
+}
+
+std::string parse_log_pattern(Value const * const logger_section)
+{
+	std::string result = std::string(DEFAULT_LOG_PATTERN);
+	if (logger_section->HasMember("log_pattern"))
+	{
+		if ((*logger_section)["log_pattern"].IsString())
+			result = std::string((*logger_section)["log_pattern"].GetString());
 	}
 
 	return result;
@@ -89,6 +102,8 @@ LoggerConfig read_config_from_json(const std::string& json_text)
 		config.log_file_path = std::move(log_file_path);
 
 	config.log_level = parse_log_level(logger_section);
+
+	config.log_pattern = parse_log_pattern(logger_section);
 
 	return config;
 }

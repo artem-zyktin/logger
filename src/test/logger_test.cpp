@@ -1,11 +1,14 @@
 ﻿#include "logger/logger.hpp"
 #include "logger/default_console_policy.hpp"
 #include "logger/default_file_policy.hpp"
+#include "logger/logger_config.hpp"
 
 #include <gtest/gtest.h>
 
 #include <fstream>
 #include <filesystem>
+
+
 
 namespace fs = std::filesystem;
 
@@ -57,18 +60,27 @@ TEST(LoggerTest, LogLevelParsing)
 	EXPECT_EQ(logger::level_to_str(logger::Level::ERROR), "error");
 }
 
+TEST(LoggerTest, LogLevelParsingException)
+{
+	EXPECT_THROW(logger::str_to_level("UKNOWN"), std::runtime_error);
+	EXPECT_THROW(logger::level_to_str(static_cast<logger::Level>(42)), std::runtime_error);
+}
+
 TEST(LoggerTest, ConfigParsing)
 {
 	constexpr std::string_view log_file = "log.txt";
+	constexpr std::string_view log_pattern = "[{{level}}][{{time}}][{{thread-id}}] {{message}}";
+
 	constexpr std::string_view json_config = R"(
 	{{
 		"logger" : {{
 			"log_file": "{}",
-			"log_level": "warning"
+			"log_level": "info",
+			"log_pattern": "{}"
 		}}
 	}})";
 
-	std::string json_text = std::format(json_config, log_file);
+	std::string json_text = std::format(json_config, log_file, log_pattern);
 
 	auto config = logger::read_config_from_json(json_text);
 
@@ -79,15 +91,18 @@ TEST(LoggerTest, ConfigParsing)
 TEST(LoggerTest, ConfigParsingFromFile)
 {
 	constexpr std::string_view log_file = "log.txt";
+	constexpr std::string_view log_pattern = "[{{level}}][{{time}}][{{thread-id}}] {{message}}";
+
 	constexpr std::string_view json_config = R"(
 	{{
 		"logger" : {{
 			"log_file": "{}",
-			"log_level": "info"
+			"log_level": "info",
+			"log_pattern": "{}"
 		}}
 	}})";
 
-	std::string json_text = std::format(json_config, log_file);
+	std::string json_text = std::format(json_config, log_file, log_pattern);
 
 	const char config_path[] = "config_log.json";
 
@@ -99,11 +114,12 @@ TEST(LoggerTest, ConfigParsingFromFile)
 
 	EXPECT_EQ(config.log_file_path, log_file);
 	EXPECT_EQ(config.log_level, logger::Level::INFO);
+	EXPECT_EQ(config.log_pattern, log_pattern);
 
 	fs::remove(config_path);
 }
 
-} // namespace logger_test
+}
 
 int main(int argc, char* argv[])
 {
