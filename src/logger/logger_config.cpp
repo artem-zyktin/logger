@@ -83,17 +83,17 @@ LoggerConfig read_config_from_json(const std::string& json_text)
 	ParseResult parse_result = doc.Parse(json_text.c_str());
 
 	if (!static_cast<bool>(parse_result))
-		std::runtime_error(std::format("json text parsing error: {}", GetParseError_En(parse_result.Code())));
+		throw std::runtime_error(std::format("json text parsing error: {}", GetParseError_En(parse_result.Code())));
 
 	if (!doc.IsObject())
-		std::runtime_error("json document must be an object");
+		throw std::runtime_error("json document must be an object");
 
 	if (!doc.HasMember("logger"))
-		std::runtime_error("json document must contain \"logger\" section");
+		throw std::runtime_error("json document must contain \"logger\" section");
 
 	Value const * logger_section = &doc["logger"];
 	if (!logger_section)
-		std::runtime_error("can't detect \"logger\" section in json document");
+		throw std::runtime_error("can't detect \"logger\" section in json document");
 
 	LoggerConfig config {};
 
