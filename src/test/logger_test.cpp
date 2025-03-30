@@ -140,6 +140,27 @@ TEST(LoggerTest, ConfigParsingValidatingSuccess)
 	EXPECT_TRUE(logger::validate_config(config));
 }
 
+TEST(LoggerTest, ConfigParsingValidatingFailure)
+{
+	constexpr std::string_view log_file = "log.txt";
+	constexpr std::string_view log_pattern = "[{{level}}][{{time}}][{{thread-id}] {{message}}";
+
+	constexpr std::string_view json_config = R"(
+	{{
+		"logger" : {{
+			"log_file": "{}",
+			"log_level": "inf",
+			"log_pattern": "{}"
+		}}
+	}})";
+
+	std::string json_text = std::format(json_config, log_file, log_pattern);
+
+	logger::LoggerConfig config = logger::read_config_from_json(json_text);
+
+	EXPECT_FALSE(logger::validate_config(config));
+}
+
 }
 
 int main(int argc, char* argv[])
