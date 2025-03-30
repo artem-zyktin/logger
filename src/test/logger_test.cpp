@@ -85,7 +85,7 @@ TEST(LoggerTest, ConfigParsing)
 	auto config = logger::read_config_from_json(json_text);
 
 	EXPECT_EQ(config.log_file_path, log_file);
-	EXPECT_EQ(config.log_level, logger::Level::WARNING);
+	EXPECT_EQ(config.log_level, logger::Level::INFO);
 }
 
 TEST(LoggerTest, ConfigParsingFromFile)
