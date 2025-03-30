@@ -23,7 +23,7 @@ std::string to_lower(const std::string_view str)
 namespace logger
 {
 
-Level str_to_level(const std::string_view level_str) noexcept
+Level str_to_level(const std::string_view level_str)
 {
 	static const std::unordered_map<std::string_view, Level> level_map = {
 		{ "debug",   Level::DEBUG },
@@ -40,7 +40,7 @@ Level str_to_level(const std::string_view level_str) noexcept
 	return it->second;
 }
 
-std::string_view level_to_str(Level level) noexcept
+std::string_view level_to_str(Level level)
 {
 	switch(level)
 	{
