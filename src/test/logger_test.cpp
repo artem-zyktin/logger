@@ -121,42 +121,21 @@ TEST(LoggerTest, ConfigParsingFromFile)
 
 TEST(LoggerTest, ConfigParsingValidatingSuccess)
 {
-	constexpr std::string_view log_file = "log.txt";
-	constexpr std::string_view log_pattern = "[{{level}}][{{time}}][{{thread-id}}] {{message}}";
 
-	constexpr std::string_view json_config = R"(
-	{{
-		"logger" : {{
-			"log_file": "{}",
-			"log_level": "info",
-			"log_pattern": "{}"
-		}}
-	}})";
-
-	std::string json_text = std::format(json_config, log_file, log_pattern);
-
-	logger::LoggerConfig config = logger::read_config_from_json(json_text);
+	logger::LoggerConfig config;
+	config.log_file_path = "log.txt";
+	config.log_level = logger::Level::INFO;
+	config.log_pattern = "[{{level}}][{{time}}][{{thread-id}}] {{message}}";
 
 	EXPECT_TRUE(logger::validate_config(config));
 }
 
 TEST(LoggerTest, ConfigParsingValidatingFailure)
 {
-	constexpr std::string_view log_file = "log.txt";
-	constexpr std::string_view log_pattern = "[{{level}}][{{time}}][{{thread-id}] {{message}}";
-
-	constexpr std::string_view json_config = R"(
-	{{
-		"logger" : {{
-			"log_file": "{}",
-			"log_level": "inf",
-			"log_pattern": "{}"
-		}}
-	}})";
-
-	std::string json_text = std::format(json_config, log_file, log_pattern);
-
-	logger::LoggerConfig config = logger::read_config_from_json(json_text);
+	logger::LoggerConfig config;
+	config.log_file_path = "log.txt";
+	config.log_level = logger::Level::INFO;
+	config.log_pattern = "[{{level}}][{{time}}][{{thread-id}] {{message}}";
 
 	EXPECT_FALSE(logger::validate_config(config));
 }
