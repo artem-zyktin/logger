@@ -67,10 +67,10 @@ inline void replace_log_pattern_placeholders(std::string& pattern)
 	using value_t = std::pair<std::string_view, std::string_view>;
 
 	static constexpr std::array<value_t, 4> variables = { {
-		{ "{{time}}",      "{1}" },
-		{ "{{thread-id}}", "{2}" },
-		{ "{{level}}",     "{3}" } ,
-		{ "{{message}}",   "{4}" }
+		{ "{{time}}",      "{0}" },
+		{ "{{thread-id}}", "{1}" },
+		{ "{{level}}",     "{2}" } ,
+		{ "{{message}}",   "{3}" }
 	} };
 
 	std::ranges::for_each(variables, [&pattern](const value_t& item) mutable
@@ -86,7 +86,7 @@ bool validate_config_log_pattern(const LoggerConfig& config)
 
 	try
 	{
-		std::vformat(log_pattern, std::make_format_args("1"sv, "2"sv, "3"sv, "4"sv));
+		(void)std::vformat(log_pattern, std::make_format_args("0"sv, "1"sv, "2"sv, "3"sv));
 	}
 	catch (const std::format_error&)
 	{
