@@ -20,5 +20,6 @@ struct LoggerConfig
 
 LoggerConfig read_config(const std::filesystem::path& file);
 LoggerConfig read_config_from_json(const std::string& json_text);
+bool validate_config(const LoggerConfig& config);
 
 } // namespace logger
