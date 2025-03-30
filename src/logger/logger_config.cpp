@@ -24,26 +24,22 @@ inline void warning(const std::string_view message)
 	std::cerr << "Warning: " << message << std::endl;
 }
 
-std::string parse_log_file(Value const * const logger_section)
-{
-	std::string result;
-	if (logger_section->HasMember("log_file"))
-	{
-		if ((*logger_section)["log_file"].IsString())
-			result = (*logger_section)["log_file"].GetString();
-		else
-			warning("\"log_file\" must be a string. Default value will be assigned.");
-	}
 
-	return result;
-}
-
-std::string parse_config_str(Value const * const section, std::string_view member_name, std::string_view default_value = "")
+std::string parse_config_str(Value const* const section, std::string_view member_name, std::string_view default_value = "")
 {
 	if (section->HasMember(member_name.data()) && (*section)[member_name.data()].IsString())
 		return (*section)["log_pattern"].GetString();
 
 	return std::string(default_value);
+}
+
+std::string parse_log_file(Value const * const logger_section)
+{
+	std::string result = parse_config_str(logger_section, "log_file", "");
+	if (result.empty())
+			warning("\"log_file\" must be a string. Default value will be assigned.");
+
+	return result;
 }
 
 Level parse_log_level(Value const * const logger_section)
