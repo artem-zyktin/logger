@@ -28,7 +28,7 @@ inline void warning(const std::string_view message)
 std::string parse_config_str(Value const* const section, std::string_view member_name, std::string_view default_value = "")
 {
 	if (section->HasMember(member_name.data()) && (*section)[member_name.data()].IsString())
-		return (*section)["log_pattern"].GetString();
+		return (*section)[member_name.data()].GetString();
 
 	return std::string(default_value);
 }
