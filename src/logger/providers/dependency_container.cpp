@@ -10,20 +10,10 @@ struct DefaultProvidersInittializer
 {
 	DefaultProvidersInittializer()
 	{
-		logger::init_default_prividers();
+		logger::DependencyContainer::emplace<logger::TimeProvider, logger::DefaultTimeProvider>();
 	}
 };
 
 const DefaultProvidersInittializer initializer_ = {};
-
-}
-
-namespace logger
-{
-
-void init_default_prividers()
-{
-	DependencyContainer::emplace<TimeProvider, DefaultTimeProvider>();
-}
 
 }

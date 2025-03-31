@@ -60,6 +60,4 @@ inline void DependencyContainer::set(std::shared_ptr<Impl> provider)
 	services_[typeid(Interface)] = std::static_pointer_cast<Interface>(std::move(provider));
 }
 
-void init_default_prividers();
-
 } // namespace logger::internal
