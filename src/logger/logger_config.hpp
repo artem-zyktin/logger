@@ -4,6 +4,7 @@
 
 #include <filesystem>
 #include <string>
+#include <tuple>
 
 namespace logger
 {
@@ -20,6 +21,8 @@ struct LoggerConfig
 
 LoggerConfig read_config(const std::filesystem::path& file);
 LoggerConfig read_config_from_json(const std::string& json_text);
-bool validate_config(const LoggerConfig& config);
+
+using validation_result_t = std::tuple<bool, std::string>;
+validation_result_t validate_config(const LoggerConfig& config);
 
 } // namespace logger

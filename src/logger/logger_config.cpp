@@ -15,6 +15,43 @@ namespace fs = std::filesystem;
 namespace
 {
 
+inline void replace_placeholder(std::string& pattern, std::string_view placeholder, std::string_view value)
+{
+	size_t index = 0;
+	while ((index = pattern.find(placeholder, index)) != std::string::npos)
+	{
+		pattern.replace(index, placeholder.size(), value);
+		index += value.size();
+	}
+}
+
+}
+
+namespace logger
+{
+
+void replace_log_pattern_placeholders(std::string& pattern)
+{
+	using value_t = std::pair<std::string_view, std::string_view>;
+
+	static constexpr std::array<value_t, 4> variables = { {
+		{ "{{time}}",      "{0}" },
+		{ "{{thread-id}}", "{1}" },
+		{ "{{level}}",     "{2}" } ,
+		{ "{{message}}",   "{3}" }
+	} };
+
+	std::ranges::for_each(variables, [&pattern](const value_t& item) mutable
+	{
+		replace_placeholder(pattern, item.first, item.second);
+	});
+}
+
+}
+
+namespace
+{
+
 using namespace rapidjson;
 using namespace logger;
 using namespace std::literals;
@@ -50,33 +87,6 @@ Level parse_log_level(Value const * const logger_section)
 std::string parse_log_pattern(Value const * const logger_section)
 {
 	return parse_config_str(logger_section, "log_pattern", DEFAULT_LOG_PATTERN);
-}
-
-inline void replace_placeholder(std::string& pattern, std::string_view placeholder, std::string_view value)
-{
-	size_t index = 0;
-	while ((index = pattern.find(placeholder, index)) != std::string::npos)
-	{
-		pattern.replace(index, placeholder.size(), value);
-		index += value.size();
-	}
-}
-
-inline void replace_log_pattern_placeholders(std::string& pattern)
-{
-	using value_t = std::pair<std::string_view, std::string_view>;
-
-	static constexpr std::array<value_t, 4> variables = { {
-		{ "{{time}}",      "{0}" },
-		{ "{{thread-id}}", "{1}" },
-		{ "{{level}}",     "{2}" } ,
-		{ "{{message}}",   "{3}" }
-	} };
-
-	std::ranges::for_each(variables, [&pattern](const value_t& item) mutable
-	{
-		replace_placeholder(pattern, item.first, item.second);
-	});
 }
 
 bool validate_config_log_pattern(const LoggerConfig& config)
@@ -145,21 +155,28 @@ LoggerConfig read_config_from_json(const std::string& json_text)
 	return config;
 }
 
-bool validate_config(const LoggerConfig& config)
+validation_result_t validate_config(const LoggerConfig& config)
 {
-	using validate_func_t = std::function<bool(const LoggerConfig&)>;
-	static std::array<validate_func_t, 1> validators = {
-		validate_config_log_pattern,
-	};
+	using func_t = bool(const LoggerConfig&);
+	using value_t = std::pair<func_t*, std::string_view>;
+
+	static std::array<value_t, 1> validators = { {
+		{ &validate_config_log_pattern, "invalid log_pattern" },
+	} };
 
 	bool result = true;
-	(void) std::ranges::find_if_not(validators, [&result, &config](const validate_func_t& validator) mutable
+	std::string message = "";
+
+	(void) std::ranges::find_if_not(validators, [&result, &message, &config](const value_t& validator) mutable
 	{
-		result = validator(config);
+		result = validator.first(config);
+		if (!result)
+			message = validator.second;
+
 		return result;
 	});
 
-	return result;
+	return { result, message };
 }
 
 }// namespace logger
