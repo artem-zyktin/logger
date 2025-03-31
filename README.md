@@ -13,7 +13,7 @@ Logger is a policy based thread safe logger. That means that you functionality d
 
 ## Version
 
-`1.4.0`
+`1.5.0`
 
 ## Why Policy-Based Design?
 
@@ -364,10 +364,10 @@ usage:
 ```cpp
 int main()
 {
-	logger::DependencyContainer::emplace<logger::TimeProvider, MyTimeProvider>(my_time_provider_ctor_args);
-	logger::DependencyContainer::set<logger::TimeProvider>(std::make_shared<MyTimeProvider>(my_time_provider_ctor_args));
-	auto time_provider = logger::DependencyContainer::get<logger::TimeProvider>();
-	// ...
+    logger::DependencyContainer::emplace<logger::TimeProvider, MyTimeProvider>(my_time_provider_ctor_args);
+    logger::DependencyContainer::set<logger::TimeProvider>(std::make_shared<MyTimeProvider>(my_time_provider_ctor_args));
+    auto time_provider = logger::DependencyContainer::get<logger::TimeProvider>();
+    // ...
 }
 ```
 
@@ -382,7 +382,7 @@ provider for getting current time as string. Should implement the next interface
 ```cpp
 struct TimeProvider
 {
-	virtual ~TimeProvider() = default;
-	virtual std::string now() const = 0;
+    virtual ~TimeProvider() = default;
+    virtual std::string now() const = 0;
 };
 ```
