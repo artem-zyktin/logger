@@ -320,7 +320,8 @@ Logger can read json config file, and it can be the same config a single configu
    {
        "logger" : {
            "log_file" : "/path/to/logfile",
-           "log_level" : "debug"
+           "log_level" : "debug",
+           "log_pattern" : "[{{time}}][{{level}}] {{message}}"
        },
        "other_config" : {
            // some other config
@@ -332,10 +333,56 @@ Logger can read json config file, and it can be the same config a single configu
    {
        "logger" : {
            "log_file" : "/path/to/logfile",
-           "log_level" : "debug"
+           "log_level" : "debug",
+           "log_pattern" : "[{{time}}][{{level}}] {{message}}"
        }
    }
    ```
 - Use `logger::read_config(const std::filesystem::path& file)` to read configuration from specified file
 
 - Use `logger::read_config_from_json(const std::string& json_text)` to read configuration from json text
+
+### Configuration items
+
+- **log_file** - output file where output log will be placed
+
+- **log_level** - minimal output level that will be written
+
+- **log_pattern** - log message pattern according to that log will write messages;
+  supports the next items:
+  '*{{time}}*' - time of the message in the format: YYYY-mm-DD HH:MM:SS.ms UTC_TIMEZONE (the format actually depends on *TimeProvider* that you can provide in DI - see the relevant paragraph)
+  '*{{thread-id}}*' - id of the current thread
+  '*{{level}}*' - log level: debug, info, warning, error
+  '*{{message}}*' - output message
+
+## Dependencies container (DI)
+
+There is an approach for customizing some behavior of logger with *DependencyContainer* class. By default there is defaults providers.
+
+usage:
+
+```cpp
+int main()
+{
+	logger::DependencyContainer::emplace<logger::TimeProvider, MyTimeProvider>(my_time_provider_ctor_args);
+	logger::DependencyContainer::set<logger::TimeProvider>(std::make_shared<MyTimeProvider>(my_time_provider_ctor_args));
+	auto time_provider = logger::DependencyContainer::get<logger::TimeProvider>();
+	// ...
+}
+```
+
+### Available providers:
+
+*for all of these dependencies default implementations provided and these initialization is hidden from users: that means that you can't control that dependencies initialization.
+
+#### *TimeProvider*
+
+provider for getting current time as string. Should implement the next interface (to be the derivative from):   
+
+```cpp
+struct TimeProvider
+{
+	virtual ~TimeProvider() = default;
+	virtual std::string now() const = 0;
+};
+```
