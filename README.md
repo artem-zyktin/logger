@@ -249,7 +249,9 @@ There is could be two decisions:
 
 1) Do not use the same policy for different logger
 
-2) If you really need to use the same policies for different loggers - bypass implementation of `initialized_policy` and `releasable_policy`. Then initialization and releasing moments of policies is your responsibility.
+2) Do not use the same policy twice in the logger
+
+3) If you really need to use the same policies for different loggers - bypass implementation of `initialized_policy` and `releasable_policy`. Then initialization and releasing moments of policies is your responsibility.
 
 ## Concepts
 
