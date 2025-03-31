@@ -127,7 +127,8 @@ TEST(LoggerTest, ConfigParsingValidatingSuccess)
 	config.log_level = logger::Level::INFO;
 	config.log_pattern = "[{{level}}][{{time}}][{{thread-id}}] {{message}}";
 
-	EXPECT_TRUE(logger::validate_config(config));
+	auto result = logger::validate_config(config);
+	EXPECT_TRUE(std::get<0>(result));
 }
 
 TEST(LoggerTest, ConfigParsingValidatingFailure)
@@ -137,7 +138,9 @@ TEST(LoggerTest, ConfigParsingValidatingFailure)
 	config.log_level = logger::Level::INFO;
 	config.log_pattern = "[{{level}}][{{time}}][{{thread-id}] {{message}}";
 
-	EXPECT_FALSE(logger::validate_config(config));
+	auto result = logger::validate_config(config);
+	EXPECT_FALSE(std::get<0>(result));
+}
 }
 
 }
