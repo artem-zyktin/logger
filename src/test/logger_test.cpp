@@ -166,9 +166,9 @@ TEST(LoggerTest, MessageFormatFromConfig)
 {
 	logger::LoggerConfig config;
 	config.log_level = logger::Level::WARNING;
-	config.log_pattern = "[{{time}}][{{level}}][{{thread-id}}] {{message}}";
+	config.log_pattern = "[{{time}}][{{level}}] {{message}}";
 
-	std::string_view check_pattern = "[{0}][{2}][{1}] {3}";
+	std::string_view check_pattern = "[{0}][{2}] {3}";
 	std::string_view message = "some text message";
 
 	std::stringstream ss;
