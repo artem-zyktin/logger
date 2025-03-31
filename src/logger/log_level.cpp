@@ -10,11 +10,10 @@ namespace
 std::string to_lower(const std::string_view str)
 {
 	std::string result (str);
-	std::transform(str.begin(), str.end(), result.begin(),
-					[](unsigned char c)
-					{
-						return std::tolower(c);
-					});
+	std::transform(str.begin(), str.end(), result.begin(), [](unsigned char c)
+	{
+		return std::tolower(c);
+	});
 
 	return result;
 }
@@ -24,7 +23,7 @@ std::string to_lower(const std::string_view str)
 namespace logger
 {
 
-Level str_to_level(const std::string_view level_str) noexcept
+Level str_to_level(const std::string_view level_str)
 {
 	static const std::unordered_map<std::string_view, Level> level_map = {
 		{ "debug",   Level::DEBUG },
@@ -35,13 +34,13 @@ Level str_to_level(const std::string_view level_str) noexcept
 
 	auto it = level_map.find(to_lower(level_str));
 
-	if (it != level_map.end())
-		std::runtime_error("uknown level string");
+	if (it == level_map.end())
+		throw std::runtime_error("uknown level string");
 
 	return it->second;
 }
 
-std::string_view level_to_str(Level level) noexcept
+std::string_view level_to_str(Level level)
 {
 	switch(level)
 	{
@@ -54,7 +53,7 @@ std::string_view level_to_str(Level level) noexcept
 		case Level::ERROR:
 			return "error";
 		default:
-			std::runtime_error("unknown level value");
+			throw std::runtime_error("unknown level value");
 			break;
 	}
 }
