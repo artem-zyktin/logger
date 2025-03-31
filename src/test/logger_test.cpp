@@ -141,12 +141,61 @@ TEST(LoggerTest, ConfigParsingValidatingFailure)
 	auto result = logger::validate_config(config);
 	EXPECT_FALSE(std::get<0>(result));
 }
+
+TEST(LoggerTest, DependencyContainer)
+{
+	auto mok_time_provider = std::make_shared<logger::MokTimeProvider>();
+	logger::DependencyContainer::set<logger::TimeProvider>(mok_time_provider);
+
+	auto mok_time_provider_ptr = logger::DependencyContainer::get<logger::TimeProvider>();
+
+	EXPECT_EQ(mok_time_provider, mok_time_provider_ptr);
+}
+
+struct MokStringPolicy
+{
+	inline static std::string output;
+
+	static void write(std::string_view message)
+	{
+		output = message;
+	}
+};
+
+TEST(LoggerTest, MessageFormatFromConfig)
+{
+	logger::LoggerConfig config;
+	config.log_level = logger::Level::WARNING;
+	config.log_pattern = "[{{time}}][{{level}}][{{thread-id}}] {{message}}";
+
+	std::string_view check_pattern = "[{0}][{2}][{1}] {3}";
+	std::string_view message = "some text message";
+
+	std::stringstream ss;
+	ss << std::this_thread::get_id();
+	std::string thread_id = ss.str();
+
+	auto time_provider = logger::DependencyContainer::get<logger::TimeProvider>();
+
+	{
+		auto log = logger::Logger<MokStringPolicy>(config);
+		log.error(message);
+	}
+
+	std::string check_message = std::vformat(check_pattern, std::make_format_args(time_provider->now(),
+														    thread_id,
+														    logger::level_to_str(logger::Level::ERROR),
+														    message));
+
+	EXPECT_EQ(check_message, MokStringPolicy::output);
 }
 
 }
 
 int main(int argc, char* argv[])
 {
+	logger::DependencyContainer::set<logger::TimeProvider>(std::make_shared<logger::MokTimeProvider>());
+
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }
