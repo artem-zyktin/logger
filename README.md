@@ -230,6 +230,7 @@ static_assert(logger::releasable_policy<SocketPolicy>);
 
 using FileLogger = logger::Logger<FilePolicy>;
 using FileSocketLogger = logger::Logger<FilePolicy, SocketPolicy>;
+using FileFileLogging = logger::Logger<FilePolicy, FilePolicy>
 
 int main()
 {
@@ -237,6 +238,8 @@ int main()
     FileSocketLogger  fs_logger; // call FilePolicy::init() and
                                  // SocketPolicy::init() for
                                  // FileSocketLogger
+    FileFileLogging ff_logger; // call FilePolicy::init() twice and
+                               // vall FilePoicy::release() twice
 } // call FilePolicy::release() twice
   // (once from FileLogger and once more time for FileSocketLogger)
   // and SocketPolicy::release once
