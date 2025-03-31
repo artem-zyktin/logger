@@ -13,7 +13,7 @@ Logger is a policy based thread safe logger. That means that you functionality d
 
 ## Version
 
-`1.5.0`
+`1.5.1`
 
 ## Why Policy-Based Design?
 
