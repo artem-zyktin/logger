@@ -3,6 +3,9 @@
 #include "logger_concepts.hpp"
 #include "log_level.hpp"
 #include "logger_config.hpp"
+#include "utils.hpp"
+#include "providers/dependency_container.hpp"
+#include "providers/time_provider.hpp"
 
 #include <array>
 #include <string>
@@ -24,10 +27,12 @@ class Logger
 public:
 	using Level = Level;
 
-	Logger(LoggerConfig config = LoggerConfig())
+	explicit Logger(LoggerConfig config = LoggerConfig())
 		: config_(std::move(config))
 	{
 		(init_if_needed<Policies>(), ...);
+
+		setup_config();
 	}
 
 	~Logger()
@@ -50,8 +55,6 @@ public:
 	const LoggerConfig& get_config() const { return config_; }
 
 private:
-
-	inline std::string get_now_str() const;
 	inline std::string get_this_thread_id() const;
 
 	template<class Policy>
@@ -68,8 +71,12 @@ private:
 			Policy::release();
 	}
 
+	void setup_config();
+
 	mutable std::mutex log_mutex_ = std::mutex();
 	const LoggerConfig config_;
+	std::string message_format_;
+
 }; // class Logger
 
 template<logger_policy ...Policies>
@@ -80,33 +87,14 @@ inline void Logger<Policies...>::log(Level level, const std::string_view message
 
 	std::scoped_lock lock(log_mutex_);
 
-	const std::string_view level_name = level_to_str(level);
-	const std::string time = get_now_str();
+	std::string now_str = DependencyContainer::get<TimeProvider>()->now();
 
-	const std::string log_entry = std::format("[{}][thread-id={}][{}] {}", std::move(time),
-																		   get_this_thread_id(),
-																		   level_name,
-																		   message);
+	const std::string log_entry = std::vformat(message_format_, std::make_format_args(now_str,
+															   get_this_thread_id(),
+															   level_to_str(level),
+															   message));
 
 	(Policies::write(log_entry), ...);
-}
-
-template<logger_policy ...Policies>
-inline std::string Logger<Policies...>::get_now_str() const
-{
-	const auto now = std::chrono::system_clock::now();
-	const auto now_time_t = std::chrono::system_clock::to_time_t(now);
-	const auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
-
-	const std::tm tm_local = *std::localtime(&now_time_t);
-
-	const auto tz_offset = std::chrono::duration_cast<std::chrono::minutes>(
-		std::chrono::current_zone()->get_info(now).offset
-	).count();
-
-	const std::chrono::sys_seconds sys_time = std::chrono::floor<std::chrono::seconds>(now);
-
-	return std::format("{:%Y-%m-%d %H:%M:%S}.{:03d} UTC{:+}", sys_time, now_ms.count(), tz_offset / 60);
 }
 
 template<logger_policy ...Policies>
@@ -116,6 +104,19 @@ inline std::string Logger<Policies...>::get_this_thread_id() const
 	ss << std::this_thread::get_id();
 
 	return ss.str();
+}
+
+extern void replace_log_pattern_placeholders(std::string& pattern);
+
+template<logger_policy ...Policies>
+inline void Logger<Policies...>::setup_config()
+{
+	const auto [ result, message ] = validate_config(config_);
+	if (!result)
+		throw std::invalid_argument(message);
+
+	message_format_ = copy(config_.log_pattern);
+	replace_log_pattern_placeholders(message_format_);
 }
 
 template<class T, class P>
