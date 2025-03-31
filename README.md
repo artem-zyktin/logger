@@ -103,22 +103,6 @@ void foo()
 }
 ```
 
-### Log level
-
-You can set up log level to skip logs that have lesser level. For example, you should set up log level - INFO to not see debug messages.
-
-```cpp
-using LoggerT = logger::Logger<logger::DefaultConsoleLoggerPolicy>;
-
-void foo()
-{
-    LoggerT log;
-    log.set_log_level(LoggerT::Level::INFO);
-
-    log.debug("Some debug message"); // there is no output
-}
-```
-
 ### Initialized/Releasable policies
 
 Logger has concepts of initialized and releasable policies (see concepts `InitializedPolicy<T>` and `ReleasablePolicy<T>`) to initialize policy by itself. Policies could be the same time initialized and releasable, or not. Logger will call `init()` for all policies that satisfy `InitializedPolicy<T>` concept and call `release()` for all policies that satisfy `ReleasablePolicy<T>` concept. For example:
