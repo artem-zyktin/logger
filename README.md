@@ -135,7 +135,7 @@ struct SomeReleasablePolicy
         std::cout << message << std::endl;
     }
 };
-static_assert(releasable_policy<SomeReleasablePolicy>);
+static_assert(logger::releasable_policy<SomeReleasablePolicy>);
 
 struct SomeInitializedAndReleasablePolicy
 {
@@ -154,8 +154,8 @@ struct SomeInitializedAndReleasablePolicy
         std::cout << message << std::endl;
     }
 };
-static_assert(initialized_policy<SomeInitializedAndReleasablePolicy>);
-static_assert(releasable_policy<SomeInitializedAndReleasablePolicy>);
+static_assert(logger::initialized_policy<SomeInitializedAndReleasablePolicy>);
+static_assert(logger::releasable_policy<SomeInitializedAndReleasablePolicy>);
 
 using logger_t = logger::Logger<SomeInitializedPolicy,
                                 SomeReleasablePolicy,
@@ -223,10 +223,10 @@ struct SocketPolicy
     static void release(){}
 };
 
-static_assert(initialized_policy<FilePolicy>);
-static_assert(releasable_policy<FilePolicy>);
-static_assert(initialized_policy<SocketPolicy>);
-static_assert(releasable_policy<SocketPolicy>);
+static_assert(logger::initialized_policy<FilePolicy>);
+static_assert(logger::releasable_policy<FilePolicy>);
+static_assert(logger::initialized_policy<SocketPolicy>);
+static_assert(logger::releasable_policy<SocketPolicy>);
 
 using FileLogger = logger::Logger<FilePolicy>;
 using FileSocketLogger = logger::Logger<FilePolicy, SocketPolicy>;
