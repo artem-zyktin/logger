@@ -7,7 +7,7 @@ namespace logger
 
 struct TimeProvider
 {
-	virtual ~TimeProvider() {};
+	virtual ~TimeProvider() = default;
 	virtual std::string now() const = 0;
 };
 
