@@ -120,7 +120,7 @@ struct SomeInitializedPolicy
         std::cout << message << std::endl;
     }
 };
-static_assert(initialized_policy<SomeInitializedPolicy>);
+static_assert(logger::initialized_policy<SomeInitializedPolicy>);
 
 
 struct SomeReleasablePolicy
@@ -173,7 +173,7 @@ void foo()
 
 ## Custom policies
 
-You could use your own policies or you own custom implementation of policies. The only requirements is to satisfy `logger::LoggerPolicy` concept:
+You could use your own policies or you own custom implementation of policies. The only requirements is to satisfy `logger::logger_policy` concept:
 
 ```cpp
 template<class T>
