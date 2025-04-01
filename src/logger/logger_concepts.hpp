@@ -25,10 +25,10 @@ concept releasable_policy = logger_policy<T> && requires
 };
 
 template<class Policy, class... Policies>
-concept is_polisy_in_list = (std::same_as<Policy, Policies> || ...);
+concept is_policy_in_list = (std::same_as<Policy, Policies> || ...);
 
 template<class Policy, class... Policies>
-concept has_policy = is_polisy_in_list<Policy, Policies...>;
+concept has_policy = is_policy_in_list<Policy, Policies...>;
 
 template<class T>
 concept has_levels = requires
