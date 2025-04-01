@@ -238,10 +238,9 @@ int main()
     FileSocketLogger  fs_logger; // call FilePolicy::init() and
                                  // SocketPolicy::init() for
                                  // FileSocketLogger
-    FileFileLogging ff_logger; // call FilePolicy::init() twice and
-                               // vall FilePoicy::release() twice
-} // call FilePolicy::release() twice
-  // (once from FileLogger and once more time for FileSocketLogger)
+    FileFileLogging ff_logger; // call FilePolicy::init() twice
+} // call FilePolicy::release() tree times
+  // (once from FileLogger, from FileSocketLogger and one more time from FileFileLogging)
   // and SocketPolicy::release once
 ```
 
@@ -255,7 +254,7 @@ There is could be two decisions:
 
 ## Concepts
 
-There is come concepts to simplify some checks:
+There are some concepts to simplify some checks:
 
 - `logger_policy<T>` check if `T` is a policy type (see above)
 
@@ -275,7 +274,7 @@ There is come concepts to simplify some checks:
 
 - `is_logger<T>` check if `T` according to the logger type has next functions:
   
-  - `void log(T::Level, std:;string_view) const`
+  - `void log(T::Level, std::string_view) const`
   
   - `void debug(std::string_view) const` 
   
@@ -287,16 +286,16 @@ There is come concepts to simplify some checks:
 
 - `logger_type<T>` is the same as `is_logger<T>` (to use in template expressions)
 
-- `is_polisy_in_list<Policy, class... Policies>` check if `Policy` in `Policies` list
+- `is_policy_in_list<Policy, class... Policies>` check if `Policy` in `Policies` list
 
-- `has_policy<Policy, class... Policies>` the same as `is_polisy_in_list`
+- `has_policy<Policy, class... Policies>` the same as `is_policy_in_list`
 
 - `logger_has_policy<T, P>` check if `T` is `LoggerType` and `T` has policy `P` for example:
   
   ```cpp
   using Logger = logger::Logger<logger::DefaultFileLoggerPolicy,
                                 logger::DefaultConsoleLoggerPolicy>;
-  static_assert(logger::HasPolicy<Logger, logger::DefaultFileLoggerPolicy>);
+  static_assert(logger::has_policy<Logger, logger::DefaultFileLoggerPolicy>);
   ```
 
 - `logger_has_no_policy<T, P>` reversed for `LoggerHasPolicy<T, P>`
