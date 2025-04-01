@@ -6,14 +6,14 @@
 namespace 
 {
 
-struct DefaultProvidersInittializer
+struct DefaultProvidersInitializer
 {
-	DefaultProvidersInittializer()
+	DefaultProvidersInitializer()
 	{
 		logger::DependencyContainer::emplace<logger::TimeProvider, logger::DefaultTimeProvider>();
 	}
 };
 
-const DefaultProvidersInittializer initializer_ = {};
+const DefaultProvidersInitializer initializer_ = {};
 
 }
